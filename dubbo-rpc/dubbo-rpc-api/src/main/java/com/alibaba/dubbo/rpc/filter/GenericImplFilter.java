@@ -1,12 +1,13 @@
 /*
- * Copyright 1999-2011 Alibaba Group.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,8 +41,6 @@ import java.lang.reflect.Method;
 
 /**
  * GenericImplInvokerFilter
- *
- * @author william.liangf
  */
 @Activate(group = Constants.CONSUMER, value = Constants.GENERIC_KEY, order = 20000)
 public class GenericImplFilter implements Filter {
@@ -91,13 +90,12 @@ public class GenericImplFilter implements Filter {
                             return new RpcResult(JavaBeanSerializeUtil.deserialize((JavaBeanDescriptor) value));
                         } else {
                             throw new RpcException(
-                                    new StringBuilder(64)
-                                            .append("The type of result value is ")
-                                            .append(value.getClass().getName())
-                                            .append(" other than ")
-                                            .append(JavaBeanDescriptor.class.getName())
-                                            .append(", and the result is ")
-                                            .append(value).toString());
+                                    "The type of result value is " +
+                                            value.getClass().getName() +
+                                            " other than " +
+                                            JavaBeanDescriptor.class.getName() +
+                                            ", and the result is " +
+                                            value);
                         }
                     } else {
                         return new RpcResult(PojoUtils.realize(value, method.getReturnType(), method.getGenericReturnType()));
@@ -175,13 +173,12 @@ public class GenericImplFilter implements Filter {
 
     private void error(String expected, String actual) throws RpcException {
         throw new RpcException(
-                new StringBuilder(32)
-                        .append("Generic serialization [")
-                        .append(Constants.GENERIC_SERIALIZATION_NATIVE_JAVA)
-                        .append("] only support message type ")
-                        .append(expected)
-                        .append(" and your message type is ")
-                        .append(actual).toString());
+                "Generic serialization [" +
+                        Constants.GENERIC_SERIALIZATION_NATIVE_JAVA +
+                        "] only support message type " +
+                        expected +
+                        " and your message type is " +
+                        actual);
     }
 
 }

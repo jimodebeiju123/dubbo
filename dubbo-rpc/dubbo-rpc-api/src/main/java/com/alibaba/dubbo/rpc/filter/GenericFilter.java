@@ -1,12 +1,13 @@
 /*
- * Copyright 1999-2011 Alibaba Group.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,8 +43,6 @@ import java.lang.reflect.Method;
 
 /**
  * GenericInvokerFilter.
- *
- * @author william.liangf
  */
 @Activate(group = Constants.PROVIDER, order = -20000)
 public class GenericFilter implements Filter {
@@ -79,12 +78,12 @@ public class GenericFilter implements Filter {
                             }
                         } else {
                             throw new RpcException(
-                                    new StringBuilder(32).append("Generic serialization [")
-                                            .append(Constants.GENERIC_SERIALIZATION_NATIVE_JAVA)
-                                            .append("] only support message type ")
-                                            .append(byte[].class)
-                                            .append(" and your message type is ")
-                                            .append(args[i].getClass()).toString());
+                                    "Generic serialization [" +
+                                            Constants.GENERIC_SERIALIZATION_NATIVE_JAVA +
+                                            "] only support message type " +
+                                            byte[].class +
+                                            " and your message type is " +
+                                            args[i].getClass());
                         }
                     }
                 } else if (ProtocolUtils.isBeanGenericSerialization(generic)) {
@@ -93,13 +92,12 @@ public class GenericFilter implements Filter {
                             args[i] = JavaBeanSerializeUtil.deserialize((JavaBeanDescriptor) args[i]);
                         } else {
                             throw new RpcException(
-                                    new StringBuilder(32)
-                                            .append("Generic serialization [")
-                                            .append(Constants.GENERIC_SERIALIZATION_BEAN)
-                                            .append("] only support message type ")
-                                            .append(JavaBeanDescriptor.class.getName())
-                                            .append(" and your message type is ")
-                                            .append(args[i].getClass().getName()).toString());
+                                    "Generic serialization [" +
+                                            Constants.GENERIC_SERIALIZATION_BEAN +
+                                            "] only support message type " +
+                                            JavaBeanDescriptor.class.getName() +
+                                            " and your message type is " +
+                                            args[i].getClass().getName());
                         }
                     }
                 }

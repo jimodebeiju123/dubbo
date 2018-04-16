@@ -1,12 +1,13 @@
 /*
- * Copyright 1999-2011 Alibaba Group.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,8 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * ExchangeServerImpl
- *
- * @author william.liangf
  */
 public class HeaderExchangeServer implements ExchangeServer {
 
@@ -54,9 +53,9 @@ public class HeaderExchangeServer implements ExchangeServer {
                     "dubbo-remoting-server-heartbeat",
                     true));
     private final Server server;
-    // 心跳定时器
-    private ScheduledFuture<?> heatbeatTimer;
-    // 心跳超时，毫秒。缺省0，不会执行心跳。
+    // heartbeat timer
+    private ScheduledFuture<?> heartbeatTimer;
+    // heartbeat timeout (ms), default value is 0 , won't execute a heartbeat.
     private int heartbeat;
     private int heartbeatTimeout;
     private AtomicBoolean closed = new AtomicBoolean(false);
@@ -71,7 +70,7 @@ public class HeaderExchangeServer implements ExchangeServer {
         if (heartbeatTimeout < heartbeat * 2) {
             throw new IllegalStateException("heartbeatTimeout < heartbeatInterval * 2");
         }
-        startHeatbeatTimer();
+        startHeartbeatTimer();
     }
 
     public Server getServer() {
@@ -135,7 +134,7 @@ public class HeaderExchangeServer implements ExchangeServer {
                 if (channel.isConnected())
                     channel.send(request, getUrl().getParameter(Constants.CHANNEL_READONLYEVENT_SENT_KEY, true));
             } catch (RemotingException e) {
-                logger.warn("send connot write messge error.", e);
+                logger.warn("send cannot write message error.", e);
             }
         }
     }
@@ -155,7 +154,7 @@ public class HeaderExchangeServer implements ExchangeServer {
     public Collection<ExchangeChannel> getExchangeChannels() {
         Collection<ExchangeChannel> exchangeChannels = new ArrayList<ExchangeChannel>();
         Collection<Channel> channels = server.getChannels();
-        if (channels != null && channels.size() > 0) {
+        if (channels != null && !channels.isEmpty()) {
             for (Channel channel : channels) {
                 exchangeChannels.add(HeaderExchangeChannel.getOrAddChannel(channel));
             }
@@ -206,7 +205,7 @@ public class HeaderExchangeServer implements ExchangeServer {
                 if (h != heartbeat || t != heartbeatTimeout) {
                     heartbeat = h;
                     heartbeatTimeout = t;
-                    startHeatbeatTimer();
+                    startHeartbeatTimer();
                 }
             }
         } catch (Throwable t) {
@@ -233,10 +232,10 @@ public class HeaderExchangeServer implements ExchangeServer {
         server.send(message, sent);
     }
 
-    private void startHeatbeatTimer() {
+    private void startHeartbeatTimer() {
         stopHeartbeatTimer();
         if (heartbeat > 0) {
-            heatbeatTimer = scheduled.scheduleWithFixedDelay(
+            heartbeatTimer = scheduled.scheduleWithFixedDelay(
                     new HeartBeatTask(new HeartBeatTask.ChannelProvider() {
                         public Collection<Channel> getChannels() {
                             return Collections.unmodifiableCollection(
@@ -249,14 +248,14 @@ public class HeaderExchangeServer implements ExchangeServer {
 
     private void stopHeartbeatTimer() {
         try {
-            ScheduledFuture<?> timer = heatbeatTimer;
+            ScheduledFuture<?> timer = heartbeatTimer;
             if (timer != null && !timer.isCancelled()) {
                 timer.cancel(true);
             }
         } catch (Throwable t) {
             logger.warn(t.getMessage(), t);
         } finally {
-            heatbeatTimer = null;
+            heartbeatTimer = null;
         }
     }
 
